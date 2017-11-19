@@ -1,0 +1,36 @@
+Question 1)
+
+a) Runing without -DPAD flag
+
+		/usr/bin/time -f "%Uu %Ss %E" ./a 1000000000
+
+		8.72u 0.01s 0:04.43
+
+   Runing with -DPAD flag
+
+		/usr/bin/time -f "%Uu %Ss %E" ./b 1000000000
+
+   		3.94u 0.00s 0:02.00
+
+
+b) So the second version (with -DPAD) flag is faster than the first one. For the user time, the second program is 8.72u - 3.94u 
+= 4.78u faster than the first one,
+and for the real time difference, the second program is 0:04.43 - 0:02.00 = 0:02.43 faster than the first one.
+
+The reason for the time difference is that for 64 bytes is a popular size of a cache line for many architectures. So when we
+make sure our data is 64 bytes aligned, the cpu could need less cache lines to load same amount of data. So by alignment, we 
+help the cpu to load less times, thus saves time for the cpu's read and write, and thus save time.
+
+c) The order of the 4 addresses is always from the highest(biggest) address  to the lowest(smallest) address
+i.e:
+	biggest, second biggest, second smallest, smallest
+
+The reason is these four global variables are stored in the stack, and stack starts from the bottom. So the first allocated 
+variable will have the biggest address as it is cloesr to the bottom of the stack and the fourth one will have the smallest 
+address as it further away from the bottom of the stack
+
+d) Because all four variables are defined as violate variables, which prevents the compiler perform any optimization on them.
+And the default behaviour of iostream is it will cast pointers to <void *> to print, but such convention will not happen
+to the four global variables because they are violate variables. So the iostream will use a a default cast and cast it to bool.
+So in order to our address printing to work properly, we have explicitly cast it to <void *> type so that the iostream object
+will have the correct behaviour.
