@@ -1,0 +1,20 @@
+some test cases:
+
+.\buffer
+
+Reason: check if the input output is handled correctly
+
+.\buffer 5 3 10 10 1000
+
+Reason: check for a large delay
+
+some test cases:
+
+.\buffer 100 3 10 10 10
+
+Reason: check for Cons >> Pros
+
+.\buffer 3 100 10 10 10
+
+Reason: check for Pros >> Cons
+

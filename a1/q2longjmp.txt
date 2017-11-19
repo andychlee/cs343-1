@@ -1,0 +1,23 @@
+b)
+i) The difference between the output is that there is extra '~' each line for the original program except for the last line.
+The reason is that the longjmp() function will not return. Which means the ackmann function that calls longjmp() will not 
+return, thus this call will not be unwinded from stack. And thus will not call the destructor of the PRT( T t; ) object. So the 
+longjmp implementation of the program will have one less call of the destructor of the PRT(T t), so it will print one less '~'.
+
+ii)Experiment results:
+
+throwcatch unoptimized: 16.64u 0.00s 0:16.64
+throwcatch optimized: 18.70u 0.00s 0:18.70
+longjmp unoptimized: 5.28u 0.00s 0:05.30
+longjmp optimized: 5.04u 0.00s 0:05.04
+
+iii)The time difference between the unoptimized transformed and original program is 11.36u, and the transformed program is 11.36u faster than the original 
+program. The reason that the longjmp is faster is because the try and catch needs to do a search every time an exception is raised. When an exception is
+raised, there needs a search to done to find the correct handler, and then set the Program Counter to the right place. This search takes time as it has to
+go through the frames in the stack. This is an O(n) operation, where n is the number of frames in the stack.
+
+However, for the longjmp implementation, we have defined where the flow should go by using setjmp and longjmp. So it does not need to do a search to find the handler, we have programmed it to be an O(1) operation. So it is faster than the catch and throw. 
+
+iv)The time difference between the optimized transformed and original program is 13.66u, and the transformed program is 13.66u faster than the original program.
+
+

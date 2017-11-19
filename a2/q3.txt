@@ -1,0 +1,48 @@
+Part A):
+
+without flag:
+    shared:17814318
+    shared:20000000
+    shared:20000000
+    shared:20000000
+    shared:20000000
+    shared:20000000
+    shared:20000000
+    shared:20000000
+    shared:20000000
+    shared:20000000
+with flag:
+	shared:10545810
+	shared:11079894
+	shared:10177730
+	shared:11048420
+	shared:11365937
+	shared:11449869
+	shared:10979076
+	shared:10508452
+	shared:11146311
+	shared:11002554
+
+
+
+Part B):
+
+    No. There is no gaurantee for the execuation order of the Tasks, and the shared += 1 is not an atomic operation. So It is very possible that one 
+    core's adding being overwritten by another core's adding, and some addings are lost.
+
+Part C):
+
+	The smallest number that could be printed is 2. In the extreme case, one thread on one core, call it A. 
+	A reads 0 and before it adds 1 to shared, the other core, B, do the adding and add number to 99999999.
+	And then A overwrites 1 to shared. So shared = 1 now.
+	And then B read shared, which is 1, and before it adds the 1, A do adding 999999999 times and add value to 100000000.
+	Then B add another 1 to 1, and gets the result of 2, and store it to shared.
+	So in the end, shared = 2. 
+
+	The largest number is 20000000 since in the best case no one's adding is lost and everyone's adding is accounted.
+
+Part D):
+
+	The multiprocessor output tends to be about half of the uniprocessor output. This means when there are multi processors, it is very easy for tasks to 
+	overwrite other tasks update. Unless we are dealing with an atomic operation, there is a high chance that the some processes overwrites other 
+	processes' update

@@ -1,0 +1,27 @@
+i) Running result:
+
+@ubuntu1604-008% /usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 100000000 0
+2.81u 0.10s 0:02.94
+@ubuntu1604-008% /usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 100000000 1
+3.16u 0.10s 0:02.06
+@ubuntu1604-008% /usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 100000000 2
+3.50u 0.19s 0:01.50
+@ubuntu1604-008% /usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 100000000 3
+5.74u 0.66s 0:01.34
+/usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 10000000 4
+35.83u 8.13s 0:03.41
+/usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 10000000 5
+259.34u 16.05s 0:11.06
+/usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 10000000 6
+6062.15u 65.58s 2:01.47
+/usr/bin/time -f "%Uu %Ss %E" ./quicksort -t 10000000 7
+259.34u 16.05s 0:11.06
+
+
+ii) from depth 0 to 3, the performance increases, from the depth 3 to 7, the deoth decerase.
+
+iii) 
+When we increases depth, we are acutally incrase the number of tasks. As we can see, when we first try to add more tasks, the runtime decreases since we 
+can take advantage of all the cpus in our machine, and the performance speed up. But as we keep increasing the tasks, there is too much 
+contention(competition) between those tasks, and there is too much cpu time wasted during context switches. So the performance actually decreases as 
+there is less time doing the sorting.

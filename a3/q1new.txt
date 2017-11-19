@@ -1,0 +1,73 @@
+a) Timing results:
+
+without any flag: u++ -O2 -multi -nodebug a3q1.cc
+    ./a.out 1 100000000            5.37u 0.00s 0:05.37
+    ./a.out 2 100000000            10.80u 0.02s 0:05.42
+    ./a.out 4 100000000            21.48u 0.03s 0:05.43
+
+
+without any flag: u++ -DIMPLKIND_DARRAY -O2 -multi -nodebug a3q1.cc 
+    ./a.out 1 100000000            8.49u 0.01s 0:08.49
+    ./a.out 2 100000000            99.27u 0.07s 0:49.67
+    ./a.out 4 100000000            354.41u 0.36s 1:29.06
+
+
+without any flag: u++ -DIMPLKIND_VECTOR1 -O2 -multi -nodebug a3q1.cc
+    ./a.out 1 100000000            12.84u 0.03s 0:12.84
+    ./a.out 2 100000000            117.02u 0.11s 0:58.53
+    ./a.out 4 100000000            382.31u 0.32s 1:36.21
+
+
+without any flag: u++ -DIMPLKIND_VECTOR1 -O2 -multi -nodebug a3q1.cc
+    ./a.out 1 100000000            59.21u 0.09s 0:59.14
+    ./a.out 2 100000000            659.58u 0.76s 5:29.75
+    ./a.out 4 100000000            2943.92u 2.76s 12:16.92
+
+
+
+b) Compare task difference:
+
+For the version without any preprocessing variables (stack version), changing the number of tasks almost does not affect the running time. 
+    2 tasks vs 1 task: run time increased by: 0:05.42 - 0:05.37 = 0:00.05, by only:  (0:05.43 -0:05.37) / 0:05.37 << 1%, less than one percent increase
+    4 tasks vs 1 task: run time increased by: 0:05.43 - 0:05.37 = 0:00.06, by only:  (0:05.43 -0:05.37) / 0:05.37 << 1%, less than one percent increase
+    4 tasks vs 2 task: run time increased by: 0:05.43 - 0:05.42 = 0:00.01, by only:  (0:05.43 -0:05.42) / 0:05.42 << 1%, less than one percent increase
+
+    The difference in the run time for the 3 stack based implementation is almost negligible.
+
+
+For the version with IMPLKIND_DARRAY (dynamic allocated array), changing the number of tasks have a huge affect. 
+    2 tasks vs 1 task: run time increased by: 0:49.67 - 0:08.49 = 0:41.05, by: 0:41.05 / 0:08.49 > 485%, increased more than 485%
+    4 tasks vs 1 task: run time increased by: 1:29.06 - 0:08.49 = 1:20.57, by:  1:20.57 / 0:08.49 > 950%, increased more than 950%
+    4 tasks vs 2 task: run time increased by: 1:29.06 - 0:49.67 = 0:39.01, by:  0:39.01 / 0:49.67 = 79%, increased about 79%
+
+    The difference in the run time for the 3 dynamic array implemetation is quite big, espeically from 1 task to 2 tasks, and 1 task 4 tasks, it
+    has a huge increase.
+
+
+For the version with DIMPLKIND_VECTOR1 (vector with preallocated size), changing the number of tasks have a huge affect. 
+    2 tasks vs 1 task: run time increased by: 0:58.53 - 0:12.84 = 0:45.69, by:  0:45.69 / 0:12.84 = 375%, increased more than 375%
+    4 tasks vs 1 task: run time increased by: 1:36.21 - 0:12.84 = 1:23.37, by:  1:23.37 / 0:12.84 > 649%, increased more than 649%
+    4 tasks vs 2 task: run time increased by: 1:36.21 - 0:58.53 = 0:37.68, by:  0:37.68 / 0:58.53 = 64%, increased more than 64%
+
+    The difference in the run time for the 3 vector with preallocated size implemetation is quite big, espeically from 1 task to 2 tasks, and 1 task 4 
+    tasks, it has a huge increase.
+
+
+For the version with DIMPLKIND_VECTOR1 (vector with reallocating space all the time), changing the number of tasks have a huge affect. 
+    2 tasks vs 1 task: run time increased by: 5:29.75 - 0:59.14 = 4:30.61, by:  4:30.61 / 0:59.14 = 460%, increased more than 460%
+    4 tasks vs 1 task: run time increased by: 12:16.92 - 0:59.14 = 11:23.37, by: 11:17.78 / 0:59.14 > 1100%, increased more than 1100%
+    4 tasks vs 2 task: run time increased by: 12:16.92 - 5:29.75 = 6:47.17, by:  6:47.17 / 5:29.17 = 120%, increased more than 120%
+
+    The difference in the run time for the 3 vector with dynamically allocated  size implemetation is quite big, espeically from 1 task to 2 tasks, and 
+    1 task 4  tasks, it has a huge increase.
+
+
+c) State the performance difference:
+
+The stack version time diffrence is way smaller than any version that are using heap. My theory is that the code we are running are sequential job that 
+can not be speeded up by having more tasks(threads), and during context switch between threads, the heap version needs to copy more stuff because using 
+heap memory requires way more bookkeeping than using the stack. And if we use a higher level data structure like the vector, it will get worse as there 
+may be tricky ways the vector is managing memory so there is extra burden during context switch. And preallocated vector is better than calling 
+push_back all the time because push_back uses doubling strategy, which requires the vector to reallocated memeory time to time again, not only it 
+requries more time, but also if context switch happens during the copying process, we need to remember more information on the exact state we are on, 
+and that is a heck a lot burden on the context switch.

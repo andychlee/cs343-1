@@ -1,0 +1,92 @@
+Q1 a)
+
+Running result without any flag
+    2.38u 0.25s 0:02.64
+    2.39u 0.23s 0:02.62
+    2.36u 0.21s 0:02.57
+    2.28u 0.27s 0:02.56
+
+ 
+Running result after compiling -DSTR flag
+    5.71u 0.18s 0:05.91
+    5.87u 0.20s 0:06.08
+    5.54u 0.20s 0:05.75
+    6.30u 0.17s 0:06.48
+
+
+Running result for compiling with -O2 flag
+    2.12u 0.20s 0:02.35
+    2.23u 0.26s 0:02.50
+    2.17u 0.25s 0:02.43
+    2.36u 0.24s 0:02.60
+
+
+Running result for compiling with -O2 -DSTR flag
+    4.74u 0.24s 0:04.30
+    4.44u 0.21s 0:04.65
+    3.63u 0.22s 0:03.89
+    3.60u 0.26s 0:03.86
+
+Q1 b)
+    Average without any flag: 2.3525u
+    Average with -DSTR: 5.855u
+
+    So in average, the one WITHOUT -DSTR flag is 3.5025u faster than the one WITH -DSTR flag.
+    The reason is the intbuf is allocated in the stack. And for the strbuf, even though the string instance is on the stack, but the actual data content 
+    is allocated in the heap. And we know that using heap is slower than using the stack, so that is why there is time difference.
+
+
+Q1 c) 
+    Average without any flag: 2.3525u
+    Average with using -O2 flag: 2.22u
+
+    So with comiler optimization, the program is 0.1325u faster than without compiler optimization
+
+    Average without -DSTR flag: 5.855u
+    Average with using -O2 AND -DSTR flag: 4.1025u
+
+    So with comiler optimization, the program is 1.7525u faster than without compiler optimization
+
+
+Q1 d) Changing the endl to \n
+
+    Without any flag
+        1.91u 0.05s 0:01.97
+        1.90u 0.06s 0:01.96
+        1.90u 0.04s 0:01.95
+        1.90u 0.02s 0:01.93        Average: 1.90u
+
+    With -DSTR flag
+        5.56u 0.06s 0:05.63
+        5.58u 0.03s 0:05.61
+        5.64u 0.02s 0:05.67
+        5.58u 0.03s 0:05.62        Average: 5.58u
+
+    With -O2 flag
+        1.88u 0.05s 0:01.94
+        1.93u 0.04s 0:01.98
+        1.79u 0.04s 0:01.83
+        1.86u 0.04s 0:01.91        Average: 1.85u
+
+    With -DSTR -O2 flag
+        3.84u 0.05s 0:03.90
+        3.54u 0.05s 0:03.59
+        3.53u 0.04s 0:03.58
+        3.62u 0.05s 0:03.67        Average: 3.68u
+
+
+    As we can see from the stats, all of the four cases runs faster when we change the endl to '\n'
+
+
+ 
+
+
+
+
+    
+
+
+
+
+
+

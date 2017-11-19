@@ -1,0 +1,146 @@
+1. Test was done Tue Sep 26 20:21:43 EDT 2017
+
+Check that both input sources are working properly
+     2  ./stringliteral                         # test input from stdin
+              # input: "777"
+              # output: '"777"' : '"777"' yes
+     3  ./stringliteral test3.txt               # test input from file
+              # input: "777"
+              # output: '"777"' : '"777"' yes
+
+Test on handling different types of VALID prefix
+
+     4  # input: u"123"
+        # output: 'u"123"' : 'u"123"' yes
+
+     5  # input: u8"123"
+        # output: 'u8"123"' : 'u8"123"' yes
+
+     6  # input: U"123"
+        # output: 'U"123"' : 'U"123"' yes
+
+     7  # input: L"123"
+        # output: 'L"123"' : 'L"123"' yes
+
+     8  # input: "u8"
+        # output: '"u8"' : '"u8"' yes
+
+Test on handling invalid types of prefix
+
+     9  # input: u8"
+        # output: 'u8"' : 'u8"' no
+
+     
+     10 # input: l"u8"
+        # output: 'l"u8"' : 'l' no -- extraneous characters '"u8"'
+
+
+     11 # input: u8
+        # output: 'u8' : 'u8' no
+
+Test on handling oct decimals
+
+     12 # input: "\888"                                               # should not have 8 in oct
+        # output: '"\888"' : '"\8' no -- extraneous characters '88"'
+
+     
+     13 # input: "\7777"                                              # hex plus extra
+        # output: '"\7777"' : '"\7777"' yes
+
+
+     14 # input: \777                                                 # missing " and "
+        # output: '\777' : '\' no -- extraneous characters '777'
+
+     15 # input: "\7"
+        # output: '"\7"' : '"\7"' yes
+
+     16 # input: "\77"
+        # output: '"\77"' : '"\77"' yes
+
+Test on simple escape sequence
+     
+     17 # input: "\\"
+        # output: '"\\"' : '"\\"' yes
+
+     18 # input: "\'"
+        # output: '"\'"' : '"\'"' yes 
+
+     19 # input: "\""
+        # output: '"\""' : '"\""' yes
+
+     20 # input: "\\"
+        # output: '"\\"' : '"\\"' yes 
+
+     21 # input: "\a"
+        # output: '"\a"' : '"\a"' yes 
+
+     22 # input: "\b"
+        # output: '"\b"' : '"\b"' yes 
+
+     23 # input: "\f"
+        # output: '"\f"' : '"\f"' yes
+
+     24 # input: "\n"
+        # output: '"\n"' : '"\n"' yes 
+
+     25 # input: "\r"
+        # output: '"\r"' : '"\r"' yes 
+
+     26 # input: "\t"
+        # output: '"\t"' : '"\t"' yes 
+
+     27 # input: "\v"
+        # output: '"\v"' : '"\v"' yes 
+
+Test on hex
+     28 # input: "\x8"                                                # length = 1
+        # output: '"\x8"' : '"\x8"' yes
+
+     29 # input: "\x888888888"                                        # length > 1
+        # output: '"\x888888888"' : '"\x888888888"' yes
+
+
+Test on escape
+     30 # input: "\\"                                                
+        # output: '"\\"' : '"\\"' yes
+
+     31 # input: "\\\"                                                
+        # output: '"\\\" ' : '"\\\" ' no
+
+     32 # input: "\\a\"                                              
+        # output: '"\\a\"' : '"\\a\"' no
+
+     33 # input: "\\\a"                                                
+        # output: '"\\\a"' : '"\\\a"' yes
+
+Test on unmatched on the back
+     34 # input: "\\"abc                                            # matched                                             
+        # output: '"\\"abc' : '"\\"' yes -- extraneous characters 'abc'
+
+     35 # input: \"abc                                              # error   
+        # output: '\"abc' : '\' no -- extraneous characters '"abc'
+
+
+Test on incomplete strings
+     36 # input: "\                                                                                          
+        # output: ''"\' : '"\' no
+
+     37 # input: L"abc                                                 
+        # output: 'L"abc' : 'L"abc' no
+
+Test on strings with "s
+     38 # input: "
+        # output: '"' : '"' no
+
+     39 # input: ""
+        # output: '""' : '""' yes
+
+     40 # input: """
+        # output: '"""' : '""' yes -- extraneous characters '"'
+
+     41 # input: """"
+        # output: '""""' : '""' yes -- extraneous characters '""'
+
+Test on empty string:
+      49 empty line 
+      # output: '' : Warning! Blank line.
