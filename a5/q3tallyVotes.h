@@ -16,7 +16,7 @@ _Monitor TallyVotes {
     // includes for this kind of vote-tallier
 _Monitor TallyVotes {
     uCondition vote_bench;
-    
+
     // private declarations for this kind of vote-tallier
 #elif defined( IMPLTYPE_INTB )               // internal scheduling monitor solution with barging
 // includes for this kind of vote-tallier
@@ -25,6 +25,9 @@ _Monitor TallyVotes {
     uCondition bench;                        // only one condition variable (you may change the variable name)
     void wait();                             // barging version of wait
     void signalAll();                        // unblock all waiting tasks
+    unsigned int arrive_id;                  // give each task an arrive_id by the order they arrive, the first guy has id 1, and second guys has id 2 and e.t.c
+    unsigned int max_id_this_round;          // use this to prevent barging, only allow a guy to vote if its id smaller than this number
+
 #elif defined( IMPLTYPE_AUTO )               // automatic-signal monitor solution
 // includes for this kind of vote-tallier
 _Monitor TallyVotes {
