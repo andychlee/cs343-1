@@ -28,9 +28,9 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Ballot ballot) {
 	        statue = 0;
 	    	printer.print(id, Voter::States::Complete);
 	    	waiting --;
+	    	while(!vote_bench.empty())
+	    		vote_bench.signal();			// last guy is responsible for waking everybody
         }
-
-        vote_bench.signal();					// tell someone to wake up
 
         return TallyVotes::Tour(result);
 }
