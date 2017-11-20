@@ -5,7 +5,7 @@ CXX = u++					# compiler
 CXXFLAGS = -g -Wall ${OPT} -multi -MMD -std=c++11 -DIMPLTYPE_${TYPE} # compiler flags
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 
-OBJECTS2 = q3tallyVotes${TYPE}.o q3printer.o q3voter.o q3.o # list of object files for question 1 prefixed with "q3"
+OBJECTS2 = q3tallyVotes${TYPE}.o q3utils.o q3printer.o q3voter.o q3.o # list of object files for question 1 prefixed with "q3"
 EXEC2 = vote$
 
 OBJECTS = ${OBJECTS2}				# all object files

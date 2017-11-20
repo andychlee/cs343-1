@@ -34,8 +34,15 @@ _Task TallyVotes {
     #error unsupported voter type
 #endif
     // common declarations
+    unsigned int group;
+    unsigned int picture;
+    unsigned int statue;
+    unsigned int giftshop;
+    unsigned int waiting;               // how many are waiting, this gets increamented when one has voted and blocked
+    int result;
+    Printer &printer;
   public:                                    // common interface
-    TallyVotes( unsigned int group, Printer & printer ){};
+    TallyVotes( unsigned int group, Printer & printer );
     struct Ballot { unsigned int picture, statue, giftshop; };
     enum Tour { Picture = 'p', Statue = 's', GiftShop = 'g' };
     Tour vote( unsigned int id, Ballot ballot );
