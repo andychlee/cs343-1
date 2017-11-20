@@ -13,8 +13,10 @@ _Monitor TallyVotes {
     // private declarations for this kind of vote-tallier
     // does not need anything as all we need is just _Accept to achieve external scheduling
 #elif defined( IMPLTYPE_INT )                // internal scheduling monitor solution
-// includes for this kind of vote-tallier
+    // includes for this kind of vote-tallier
 _Monitor TallyVotes {
+    uCondition vote_bench;
+    
     // private declarations for this kind of vote-tallier
 #elif defined( IMPLTYPE_INTB )               // internal scheduling monitor solution with barging
 // includes for this kind of vote-tallier
