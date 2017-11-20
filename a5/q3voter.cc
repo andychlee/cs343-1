@@ -1,4 +1,5 @@
 #include "q3voter.h"
+#include "q3printer.h"
 
 /*
  * Voter related functions
