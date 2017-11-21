@@ -39,6 +39,9 @@ _Monitor TallyVotes {
 #elif defined( IMPLTYPE_TASK )               // internal/external scheduling task solution
 _Task TallyVotes {
     // private declarations for this kind of vote-tallier
+    unsigned int voter_id;
+    uCondition bench;
+    void main();
 #else
     #error unsupported voter type
 #endif
@@ -55,6 +58,11 @@ _Task TallyVotes {
     struct Ballot { unsigned int picture, statue, giftshop; };
     enum Tour { Picture = 'p', Statue = 's', GiftShop = 'g' };
     Tour vote( unsigned int id, Ballot ballot );
+
+    #if defined(IMPLTYPE_TASK)
+  private:
+    Ballot voter_ballot;
+    #endif // defined(IMPLTYPE_TASK)
 };
 
 #endif

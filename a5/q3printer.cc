@@ -73,7 +73,7 @@ Printer::~Printer() {
     delete [] buffer;
 }
 
-// overriding printers
+// overriding printers to handle different cases
 void Printer::print( unsigned int id, Voter::States state) {
     if (buffer[id] == "NONE") buffer[id] = get_state(state);
     else flush(get_state(state), id);

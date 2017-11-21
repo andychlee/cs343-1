@@ -11,7 +11,7 @@ using namespace std;
 MPRNG mprng;
 
 void usage() {
-    cerr << "Usage: ./voteMC  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)" << endl;
+    cerr << "Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)" << endl;
     exit(-1);
 }
 
