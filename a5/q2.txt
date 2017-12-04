@@ -1,0 +1,8 @@
+This situation is a deadlock situation.
+
+The reason is that they are all went to sleep and looking at each other(holding the lock of other angel) and waiting for the 
+other angel(thread) to wake them up(signal them), but this will never happen as they are all went to sleep.
+
+In contrast, if it is a livelock situation, all angels should be awake and constantly change state between each other and none
+stop. But this is not the case, as they are all sleeping and non-state changing is happening. So this is NOT a livelock
+It is a deadlock.

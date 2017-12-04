@@ -1,0 +1,439 @@
+1) test on invalid input
+
+*****************************************************************************
+INVALID INPUT TESTING
+
+1.1) too many arguments
+@ubuntu1604-008% ./vote 4 4 1 2
+Output:
+invalid number of arguments
+Usage: ./voteMC  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)
+
+
+1.2) second number not dividable by first number
+
+@ubuntu1604-008% ./vote 6 7 1
+Output
+The voters must be a positive integer and it must be divisable by group
+Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)
+
+
+1.3) second number is negative
+
+@ubuntu1604-008% ./vote 6 -1 1
+the group must be a positive integer
+Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)
+
+
+1.4) string as input
+
+@ubuntu1604-008% ./vote str 1 1
+the voters must be a positive integer and it must be divisable by group
+Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)
+
+Analysis: All the above are testing if reading input and error checking is implemented correctly
+*****************************************************************************
+
+
+2) Testing on random number generation
+*****************************************************************************
+INVALID INPUT TESTING
+
+2.1) Missing seed
+@ubuntu1604-008% ./vote 3 1
+V0	V1	V2
+*******	*******	*******
+	S
+	V 2,0,1
+	C
+	F p	S
+		V 1,2,0
+		C
+S		F s
+V 1,2,0
+C
+F s
+*****************
+All tours started
+
+
+2.2) Missing seed and group
+@ubuntu1604-008% ./vote 3
+V0	V1	V2
+*******	*******	*******
+	S
+	V 1,2,0
+S	B 1
+V 0,1,2
+B 2		S
+		V 2,0,1
+U 1		C
+F g	U 0	F g
+	F g
+*****************
+All tours started
+
+
+2.3) Missing all three parameters
+@ubuntu1604-008% ./vote
+V0	V1	V2	V3	V4	V5
+*******	*******	*******	*******	*******	*******
+		S
+		V 1,2,0
+		B 1			S
+					V 1,2,0
+S					B 2
+V 0,2,1
+C					U 1
+F s	S	U 0			F s
+	V 2,1,0	F s
+	B 1		S
+			V 0,2,1
+			B 2	S
+				V 1,2,0
+			U 1	C
+	U 0		F s	F s
+	F s
+*****************
+All tours started
+
+Analysis: All the above are testing if generating random number when input is missing is implemented correctly
+*****************************************************************************
+
+3) Test many voters, small group size
+*****************************************************************************
+
+3.1) ./vote 10 1 1
+@ubuntu1604-008% ./vote 10 1 1
+V0	V1	V2	V3	V4	V5	V6	V7	V8	V9
+*******	*******	*******	*******	*******	*******	*******	*******	*******	*******
+									S
+									V 2,1,0
+S									C
+V 2,1,0									F p
+C
+F p	S					S
+	V 2,0,1
+	C					V 0,2,1
+	F p					C
+						F s		S
+								V 1,0,2
+								C
+				S			S	F g
+							V 2,0,1
+				V 0,1,2			C
+			S	C			F p
+			V 2,0,1	F g	S
+			C		V 2,1,0
+		S	F p		C
+		V 1,2,0			F p
+		C
+		F s
+*****************
+All tours started
+
+3.2) ./vote 10 2 1
+@ubuntu1604-008% ./vote 10 2 1
+V0	V1	V2	V3	V4	V5	V6	V7	V8	V9
+*******	*******	*******	*******	*******	*******	*******	*******	*******	*******
+									S
+									V 2,1,0
+S									B 1
+V 2,1,0
+C									U 0
+F p	S					S			F p
+	V 2,0,1
+	B 1					V 0,2,1
+	U 0					C
+	F g					F g		S
+								V 1,0,2
+				S			S	B 1
+							V 2,0,1
+							C	U 0
+			S	V 0,1,2	S		F g
+			V 2,0,1	B 1				F g
+		S	C	U 0
+			F g		V 2,1,0
+		V 1,2,0		F g	B 1
+		C			U 0
+		F p			F p
+*****************
+All tours started
+
+Analyziz: We want to check if there are large number of voters and small group size
+*****************************************************************************
+
+4) test many voters, large group 
+*****************************************************************************
+4.1)./vote 10 10 1
+
+@ubuntu1604-008% ./vote 10 10 1
+V0	V1	V2	V3	V4	V5	V6	V7	V8	V9
+*******	*******	*******	*******	*******	*******	*******	*******	*******	*******
+									S
+									V 2,1,0
+S									B 1
+V 2,1,0
+B 2	S					S
+	V 2,0,1
+	B 3					V 0,2,1
+						B 4		S
+								V 1,0,2
+				S			S	B 5
+							V 2,0,1
+				V 0,1,2			B 6
+			S	B 7	S
+			V 2,0,1
+			B 8		V 2,1,0
+		S			B 9
+		V 1,2,0
+		C			U 8
+		F p	U 7	U 6	F p
+			F p	F p			U 5	U 4
+	U 2					U 3	F p	F p
+U 1	F p					F p			U 0
+F p									F p
+*****************
+All tours started
+
+4.2)./vote 10 5 1
+@ubuntu1604-008% ./vote 10 5 1
+V0	V1	V2	V3	V4	V5	V6	V7	V8	V9
+*******	*******	*******	*******	*******	*******	*******	*******	*******	*******
+									S
+									V 2,1,0
+S									B 1
+V 2,1,0
+B 2	S					S
+	V 2,0,1
+	B 3					V 0,2,1
+						B 4		S
+								V 1,0,2
+						U 3		C
+U 1	U 2			S		F p	S	F p
+F p	F p		S		S		V 2,0,1		U 0
+				V 0,1,2			B 1		F p
+		S	V 2,0,1	B 2
+			B 3		V 2,1,0
+		V 1,2,0			B 4
+		C			U 3
+		F p	U 2	U 1	F p
+			F p	F p			U 0
+							F p
+*****************
+All tours started
+
+
+Analysis: we want to check that we have many voters and large group size if this works
+*****************************************************************************
+
+
+5) Test special case: test one voter, one group
+*****************************************************************************
+
+./vote 1 1 1
+@ubuntu1604-008% ./vote 1 1 1
+V0
+*******
+S
+V 1,2,0
+C
+F s
+*****************
+All tours started
+
+We want to check if this will fail on special case
+******************************************************************************
+
+
+6) Test medium size group, with medium group size
+******************************************************************************
+@ubuntu1604-008% ./vote 6 3 1
+V0	V1	V2	V3	V4	V5
+*******	*******	*******	*******	*******	*******
+S
+V 1,0,2
+B 1	S
+	V 0,1,2
+	B 2			S
+				V 2,1,0
+	U 1		S	C
+U 0	F g	S	V 2,1,0	F g	S
+F g			B 1		V 2,0,1
+		V 0,2,1			B 2
+		C			U 1
+		F p	U 0		F p
+			F p
+*****************
+All tours started
+
+We want to check if this will fail on the medium case
+******************************************************************************
+
+
+7) really large voters
+******************************************************************************
+./vote 20 2 1
+
+@ubuntu1604-008% ./vote 20 2 1
+V0	V1	V2	V3	V4	V5	V6	V7	V8	V9	V10	V11	V12	V13	V14	V15	V16	V17	V18	V19
+*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******	*******
+									S		S
+											V 2,0,1
+									V 0,1,2		B 1
+S									C	S	U 0
+									F g	V 2,0,1
+V 2,1,0										B 1	S
+C										U 0	F g
+F p											V 1,2,0
+	S					S				F p	B 1	S		S
+	V 2,0,1
+	C										SU 0
+	F p					V 0,2,1
+						B 1		S			F p	V 2,1,0
+						U 0					SC
+											F s		V 1,0,2
+						F s	S				V 1,0,2						B 1	S
+				S							CU 0
+								V 0,1,2			F g
+			S		S			B 1			V 0,1,2					F g
+								U 0			CS
+		S					V 2,1,0				F g
+							B 1	F g			V 2,0,1
+							U 0				SC
+				V 2,0,1							F p
+			V 2,0,1	B 1			F p
+			C	U 0
+			F p		V 1,0,2
+				F p	B 1						V 2,1,0
+					U 0						C
+		V 2,0,1									F p
+		B 1			F p						V 1,2,0
+		U 0									C
+		F p									F p
+*****************
+All tours started
+
+Analysis: we want to check if really large number of voters will work.
+******************************************************************************
+
+
+
+******************************************************************************
+
+8) Check if different random number makes a difference
+8.1)./vote 6 3 102331
+
+@ubuntu1604-008% ./vote 6 3 102331
+V0	V1	V2	V3	V4	V5
+*******	*******	*******	*******	*******	*******
+				S
+				V 0,1,2
+			S	B 1
+			V 1,0,2
+	S		B 2		S
+					V 2,1,0
+			U 1		C
+S	V 0,2,1	S	F g	U 0	F g
+V 1,2,0	B 1			F g
+B 2		V 2,0,1
+U 1		C
+F s	U 0	F s
+	F s
+*****************
+All tours started
+
+
+8.2)./vote 6 3 1
+@ubuntu1604-008% ./vote 6 3 1
+V0	V1	V2	V3	V4	V5
+*******	*******	*******	*******	*******	*******
+S
+V 1,0,2
+B 1	S
+	V 0,1,2
+	B 2			S
+				V 2,1,0
+	U 1		S	C
+U 0	F g	S	V 2,1,0	F g	S
+F g			B 1		V 2,0,1
+		V 0,2,1			B 2
+		C			U 1
+		F p	U 0		F p
+			F p
+*****************
+All tours started
+
+8.3)./vote 6 3 31415926
+@ubuntu1604-008% ./vote 6 3 31415926
+V0	V1	V2	V3	V4	V5
+*******	*******	*******	*******	*******	*******
+S		S
+V 1,0,2
+B 1	S	V 1,0,2
+	V 0,2,1	B 2
+	C	U 1
+U 0	F g	F g
+F g			S	S
+			V 0,1,2
+			B 1	V 0,2,1
+				B 2	S
+					V 1,2,0
+				U 1	C
+			U 0	F s	F s
+			F s
+*****************
+All tours started
+
+******************************************************************************
+
+
+9) check test small votes, small group
+******************************************************************************
+9.1)./vote 4 1 1
+@ubuntu1604-008% ./vote 4 1 1
+V0	V1	V2	V3
+*******	*******	*******	*******
+S
+V 2,1,0
+C
+F p	S
+	V 1,0,2
+	C
+	F g		S
+			V 0,1,2
+		S	C
+		V 2,1,0	F g
+		C
+		F p
+*****************
+All tours started
+
+9.2) ./vpte 4 2 1
+@ubuntu1604-008% ./vote 4 2 1
+V0	V1	V2	V3
+*******	*******	*******	*******
+S
+V 2,1,0
+B 1	S
+	V 1,0,2
+U 0	C
+F p	F p		S
+			V 0,1,2
+		S	B 1
+		V 2,1,0
+		C	U 0
+		F g	F g
+*****************
+All tours started
+
+
+******************************************************************************
+
+
+And repeat the above tests for 5 different type of implementations.
+
+
+
+
+

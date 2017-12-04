@@ -1,67 +1,73 @@
-void TallyVotes::wait() {
-    bench.wait();                            // wait until signalled
-    while ( rand() % 2 == 0 ) {              // multiple bargers allowed
-        _Accept( vote ) {                    // accept barging callers
-        } _Else {                            // do not wait if no callers
-        } // _Accept
-    } // while
+#include <iostream>
+#include "q3tallyVotes.h"
+#include "q3voter.h"
+#include "q3printer.h"
+
+using namespace std;
+/*
+ * main program
+ */
+
+MPRNG mprng;
+
+void usage() {
+    cerr << "Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0, default 3)  Seed (> 0)" << endl;
+    exit(-1);
 }
 
-void TallyVotes::signalAll() {               // also useful
-    while ( ! bench.empty() ) bench.signal();// drain the condition
-}
+int main(int argc, char * argv[]) {
 
-#if defined( IMPLTYPE_EXT )                  // external scheduling monitor solution
-// includes for this kind of vote-tallier
-_Monitor TallyVotes {
-    // private declarations for this kind of vote-tallier
-#elif defined( IMPLTYPE_INT )                // internal scheduling monitor solution
-// includes for this kind of vote-tallier
-_Monitor TallyVotes {
-    // private declarations for this kind of vote-tallier
-#elif defined( IMPLTYPE_INTB )               // internal scheduling monitor solution with barging
-// includes for this kind of vote-tallier
-_Monitor TallyVotes {
-    // private declarations for this kind of vote-tallier
-    uCondition bench;                        // only one condition variable (you may change the variable name)
-    void wait();                             // barging version of wait
-    void signalAll();                        // unblock all waiting tasks
-#elif defined( IMPLTYPE_AUTO )               // automatic-signal monitor solution
-// includes for this kind of vote-tallier
-_Monitor TallyVotes {
-    // private declarations for this kind of vote-tallier
-#elif defined( IMPLTYPE_TASK )               // internal/external scheduling task solution
-_Task TallyVotes {
-    // private declarations for this kind of vote-tallier
-#else
-    #error unsupported voter type
-#endif
-    // common declarations
-  public:                                    // common interface
-    TallyVotes( unsigned int group, Printer & printer );
-    struct Ballot { unsigned int picture, statue, giftshop; };
-    enum Tour { Picture = 'p', Statue = 's', GiftShop = 'g' };
-    Tour vote( unsigned int id, Ballot ballot );
-};
+    // read in input
+    int voters_count = 6, group = 3, r_seed = getpid();
 
-_Task Voter {
-    // Choose ranking of picture tour, then relationship of statue to gift shop.
-    TallyVotes::Ballot cast() {              // cast 3-way vote
-        static unsigned int voting[3][2][2] = { { {2,1}, {1,2} }, { {0,2}, {2,0} }, { {0,1}, {1,0} } };
-        unsigned int picture = mprng( 2 ), statue = mprng( 1 );
-        return (TallyVotes::Ballot){ picture, voting[picture][statue][0], voting[picture][statue][1] };
+    switch(argc) {
+        case 4:
+            try {
+                r_seed = stoi(argv[3]);
+                if (r_seed <= 0) throw 1;
+            } catch(...) {
+                cerr << "the seed must be a positive integer" << endl;
+                usage();
+            }
+        case 3:
+            try {
+                group = stoi(argv[2]);
+                if (group <= 0) throw 1;
+            } catch(...) {
+                cerr << "the group must be a positive integer" << endl;
+                usage();
+            }
+        case 2:
+            try {
+                voters_count = stoi(argv[1]);
+                if (voters_count <= 0 || voters_count % group != 0) throw 1;
+            } catch(...) {
+                cerr << "the voters must be a positive integer and it must be divisable by group" << endl;
+                usage();
+            }
+        case 1:
+            break;
+
+        default:
+            cerr << "invalid number of arguments" << endl;
+            usage();
+
     }
-  public:
-    enum States { Start = 'S', Vote = 'V', Block = 'B', Unblock = 'U', Barging = 'b',
-                   Complete = 'C', Finished = 'F' };
-    Voter( unsigned int id, TallyVotes & voteTallier, Printer & printer );
-};
 
-_Monitor / _Cormonitor Printer {             // chose one of the two kinds of type constructor
-  public:
-    Printer( unsigned int voters );
-    void print( unsigned int id, Voter::States state );
-    void print( unsigned int id, Voter::States state, TallyVotes::Tour tour );
-    void print( unsigned int id, Voter::States state, TallyVotes::Ballot ballot );
-    void print( unsigned int id, Voter::States state, unsigned int numBlocked );
-};
+    Printer printer((unsigned int)voters_count);
+    TallyVotes tally_votes((unsigned int)group, printer);
+    Voter* voters[voters_count];
+
+    mprng.set_seed(r_seed);
+
+    // creating tasks
+    for (int i = 0; i < voters_count; i++) {
+        voters[i] = new Voter(i, tally_votes, printer);
+    }
+
+    // ending tasks
+    for (int i = 0; i < voters_count; i++) {
+        delete voters[i];
+    }
+
+}
