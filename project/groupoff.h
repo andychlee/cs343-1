@@ -1,0 +1,31 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Define the interface to the Groupoff
+// ...
+//--------------------------------------------------------------------------------------------------------------------
+
+#ifndef __GROUP_OFF_H__
+#define __GROUP_OFF_H__
+
+#include <vector>
+#include "printer.h"
+#include "watcard.h"
+#include "MPRNG.h"
+
+using namespace std;
+
+_Task Groupoff {
+	  Printer &prt;
+	  unsigned int numStudents;
+	  unsigned int sodaCost;
+	  unsigned int groupoffDelay;
+	  vector<WATCard::FWATCard> giftCards;						// a list of gift cards
+	  vector<WATCard*> watCards;								// a list of real watcards
+	  unsigned int calledUpon;									// how many times the giftCard routine is called
+	  void main();
+	public:
+	  Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay );
+	  ~Groupoff();
+	  WATCard::FWATCard giftCard();
+};
+
+#endif
