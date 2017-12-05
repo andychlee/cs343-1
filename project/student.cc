@@ -1,5 +1,6 @@
 //--------------------------------------------------------------------------------------------------------------------
 // Implementation to the Student Task
+// The purpose of a student's life is to drink sodas. When a student drinks enough soda, he is done.
 //--------------------------------------------------------------------------------------------------------------------
 #include "student.h"
 
@@ -9,12 +10,13 @@
 Student::Student( Printer & prt, NameServer & nameServer, WATCardOffice & cardOffice, Groupoff & groupoff,
                   unsigned int id, unsigned int maxPurchases  ): prt(prt), nameServer(nameServer), cardOffice(cardOffice),
 groupoff(groupoff), id(id), maxPurchases(maxPurchases) {
-    purchaseNum = mprng(1,maxPurchases);                            // set up purchase number for this student
-    flavour = static_cast<VendingMachine::Flavours>(mprng(0, 3));   // select random number for this student
-    watcard = cardOffice.create(id, 5);                             // create a $5 watcard
-    giftcard = groupoff.giftCard();                                 // create a giftcard
-    vendingMachine = nameServer.getMachine(id);                     // get vending maching pointer from nameserver
-    prt.print(Printer::Kind::Student, id, 'S', flavour, purchaseNum);        // let the world know that a student is starting
+    purchaseNum = mprng(1,maxPurchases);                                                // set up purchase number for this student
+    flavour = static_cast<VendingMachine::Flavours>(mprng(0, 3));                       // select random number for this student
+    watcard = cardOffice.create(id, 5);                                                 // create a $5 watcard
+    giftcard = groupoff.giftCard();                                                     // create a giftcard
+    prt.print(Printer::Kind::Student, id, 'S', flavour, purchaseNum);                   // let the world know that a student is starting
+    vendingMachine = nameServer.getMachine(id);                                         // get vending maching pointer from nameserver
+    prt.print(Printer::Kind::Student, id, 'V', (int)(vendingMachine->getId()));         // print the id of the vending machine we got
 } // Student::Student
 
 
@@ -51,7 +53,7 @@ void Student::main(){
                         vendingMachine = nameServer.getMachine(id);                     // in this case, student tries to get another vending machine
                         prt.print(Printer::Kind::Student, id, 'V', (int)(vendingMachine->getId()));
                     } catch(VendingMachine::Funds fe) {                                 // insufficent funds are in the card.
-                        cardOffice.transfer(id, 5+vendingMachine->cost(), card);     // get the transfer from watcard office
+                        cardOffice.transfer(id, 5+vendingMachine->cost(), card);        // get the transfer from watcard office
                     } catch(WATCardOffice::Lost le){                                    // watcard lost
                         prt.print(Printer::Kind::Student, id, 'L');
                         watcard = cardOffice.create(id, 5);                             // recreate a watcard from the office
@@ -60,7 +62,7 @@ void Student::main(){
                         prt.print(Printer::Kind::Student, id, 'A', flavour, (int)card->getBalance());
                         break;
                     }
-            }   // _Select
+            }    // _Select
         }   // StartBuying
     }   // for
 
