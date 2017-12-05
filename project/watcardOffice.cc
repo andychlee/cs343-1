@@ -21,11 +21,6 @@ WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers
 // Destructor of WATCardOffice
 //--------------------------------------------------------------------------------------------------------------------
 WATCardOffice::~WATCardOffice() {
-    for ( ;; ) {                                                            // delete all pending works
-        if ( requests.empty() ) break;
-        delete requests.front();
-        requests.pop_front();
-    } // for
     for ( unsigned i = 0; i < numCouriers; i += 1 ) {                       // free memory
         delete courierPool[i];                                              // stop a courier
     } // for
@@ -74,31 +69,27 @@ void WATCardOffice::Courier::main() {
     prt.print( Printer::Kind::Courier, lid, 'S' );                          // starting
 
     for ( ;; ) {
-        _Accept( WATCardOffice::~Courier ) {
-            break;
-        } _Else {
-            Job *job = cardOffice.requestWork();                            // take next work request
-            if (job == NULL) break;                                         // courier is about to be deleted
+        Job *job = cardOffice.requestWork();                            // take next work request
+        if (job == NULL) break;                                         // courier is about to be deleted
 
-            WATCard *card = job->args.card;                                 // student's watcard
-            unsigned int sid = job->args.sid;                               // student id
-            unsigned int amount = job->args.amount;                         // amount to transfer
+        WATCard *card = job->args.card;                                 // student's watcard
+        unsigned int sid = job->args.sid;                               // student id
+        unsigned int amount = job->args.amount;                         // amount to transfer
 
-            prt.print( Printer::Kind::Courier, lid, 't', sid, amount );     // start funds transfer
-            bank.withdraw( sid, amount );                                   // obtain money from the bank
-            card->deposit( amount );                                        // update the student's WATCard
+        prt.print( Printer::Kind::Courier, lid, 't', sid, amount );     // start funds transfer
+        bank.withdraw( sid, amount );                                   // obtain money from the bank
+        card->deposit( amount );                                        // update the student's WATCard
 
-            // there is a 1 in 6 chance a courier losses a student's WATCard
-            if (mprng(0, 5) == 0) {
-                job->result.exception( new Lost() );                        // inserted exception into the future
-                prt.print( Printer::Kind::Courier, lid, 'L', sid );         // lost WATCard card
-            } else {
-                job->result.delivery( card );                               // making the future available
-                prt.print( Printer::Kind::Courier, lid, 'T', sid, amount ); // complete funds transfer
-            } // if
+        // there is a 1 in 6 chance a courier losses a student's WATCard
+        if (mprng(0, 5) == 0) {
+            job->result.exception( new Lost() );                        // inserted exception into the future
+            prt.print( Printer::Kind::Courier, lid, 'L', sid );         // lost WATCard card
+        } else {
+            job->result.delivery( card );                               // making the future available
+            prt.print( Printer::Kind::Courier, lid, 'T', sid, amount ); // complete funds transfer
+        } // if
 
-            delete job;
-        } // _Accept
+        delete job;
     } // for
 
     prt.print(Printer::Kind::Courier, lid, 'F');                            // finished
@@ -111,13 +102,22 @@ void WATCardOffice::main() {
     prt.print(Printer::Kind::WATCardOffice, 'S');                           // starting
 
     for ( ;; ) {
-        _Accept( WATCardOffice::~WATCardOffice ) {
+        _Accept( ~WATCardOffice ) {
+            // delete all pending works so that courier can be break (loop terminated)
+            for ( ;; ) {
+                if ( requests.empty() ) break;
+                delete requests.front();
+                requests.pop_front();
+            } // for
+
             for ( unsigned i = 0; i < numCouriers; i += 1 ) {
                 // courier is still waiting for the work, should let them through
+                // because requests is empty now, the infinite loop will be terminted
                 _Accept( requestWork );
             } // for
+
             break;
-        } or _When( requests.size() > 0 ) _Accept( requestWork ) {          // blocks until a Job request is ready
+        } or _When( !requests.empty() ) _Accept( requestWork ) {         // blocks until a Job request is ready
         } or _Accept( create ) {
         } or _Accept( transfer ) {
         } // _Accept

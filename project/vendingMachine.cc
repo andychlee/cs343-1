@@ -89,7 +89,6 @@ void VendingMachine::main() {
             } else if ( mprng( 0, 4 ) == 0 ) {              // 1 in 5 chance the soda is free, raising exception
                 stocks[flavour] -= 1;                       // update stocks
                 raiseType = RaiseType::free;
-                prt.print( Printer::Kind::Vending, id, 'B', flavour, stocks[flavour] );
             } else if ( card->getBalance() < sodaCost ) {   // raise Funds if student has insufficient funds
                 raiseType = RaiseType::funds;
             } else {
